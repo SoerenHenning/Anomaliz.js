@@ -2,6 +2,14 @@
 function TeeAdViz(domContainer, config) {
 	config = config || {};
 
+	//this.values/measurements
+	//this.predictions
+	//this.anomalyscores
+	//this.thresholds = [upper, lower]
+	//this.anomalyScoreVisibility
+	//this.predictionVisibility
+
+	//this.size
   var size = [600, [300, 100]]; //TODO
 
   this.measurementsPlot = new CanvasTimeSeriesIndicatorPlot(d3.select(domContainer), [size[0], size[1[0]]], {
@@ -17,10 +25,22 @@ function TeeAdViz(domContainer, config) {
   anomalyscoresPlot.updateDomains(measurementsPlot.getXDomain(), [0, 1], false); // TODO Domain
 }
 
-CanvasDataPlot.prototype.setMeasurements = function(measurementsSet) {
+TeeAdViz.prototype.setMeasurements = function(measurementsSet) {
 
 };
 
-CanvasDataPlot.prototype.addMeasurements = function(measurementsSet) {
+TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
 
+};
+
+TeeAdViz.prototype.setThresholds = function(thresholds) {
+	// Rebuild indicators
+};
+
+TeeAdViz.prototype.setAnomalyScoreVisibility = function(visibility) {
+	//neceseccary or should this be done by the consumer? (via jQuery, css, etc.)
+};
+
+TeeAdViz.prototype.setPredictionVisibility = function(visibility) {
+	// add/remove prediction plot
 };
