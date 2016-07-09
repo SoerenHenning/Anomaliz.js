@@ -33,7 +33,13 @@ TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
 
 };
 
-TeeAdViz.prototype.setThresholds = function(thresholds) {
+TeeAdViz.prototype.setThresholds = function() {
+	if (arguments.length >= 2) {
+		this.thresholds = [arguments[0], arguments[1]]
+	} else if (arguments.length == 1) {
+		this.thresholds = [arguments[0], arguments[0]]
+	}
+	
 	// Rebuild indicators
 };
 
