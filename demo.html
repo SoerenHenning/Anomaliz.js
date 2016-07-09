@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CanvasPlot Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="dep/canvasplot.css">
+  <script src="dep/jquery-2.2.3.min.js" charset="utf-8"></script>
+  <script src="dep/d3.min.js" charset="utf-8"></script>
+  <script src="dep/canvasplot.js" charset="utf-8"></script>
+  <script src="dep/canvasplot-indicator-ts.js" charset="utf-8"></script>
+  <script src="teead-viz.js" charset="utf-8"></script>
+</head>
+<body>
+
+<div id="maincontainer">
+
+</div>
+
+<script type="text/javascript">
+function getDemoPlotSize() {
+	return [window.innerWidth-100, Math.round(0.45*(window.innerWidth-100))];
+}
+
+$(document).ready(function() {
+	var visualization = new TeeAdViz(d3.select("#maincontainer"), {});
+});
+</script>
+</body>
+</html>
