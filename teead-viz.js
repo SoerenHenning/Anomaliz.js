@@ -16,11 +16,11 @@ function TeeAdViz(domContainer, config) {
 
   this.measurementsPlot = new CanvasTimeSeriesIndicatorPlot(domContainer, [size[0], size[1][0]], {
     yAxisLabel: this.measurementsAxisLabel,
-    updateViewCallback: this.setViews //TODO
+    updateViewCallback: (this.setViews).bind(this)
   });
   this.anomalyscoresPlot = new CanvasTimeSeriesPlot(domContainer, [size[0], size[1][1]], {
     yAxisLabel: this.anomalyscoresAxisLabel,
-    updateViewCallback: this.setViews //TODO
+    updateViewCallback: (this.setViews).bind(this)
   });
 
 
@@ -29,6 +29,8 @@ function TeeAdViz(domContainer, config) {
   this.anomalyscoresPlot.setZoomYAxis(false);
   this.anomalyscoresPlot.updateDomains(this.measurementsPlot.getXDomain(), [0, 1], false); // TODO Domain
 }
+
+// public interface
 
 TeeAdViz.prototype.setMeasurements = function(measurementsSet) {
 	this.measurementsPlot.removeDataSet("measurements");
@@ -99,6 +101,8 @@ TeeAdViz.prototype.setAnomalyScoreVisibility = function(visibility) {
 TeeAdViz.prototype.setPredictionVisibility = function(visibility) {
 	// add/remove prediction plot
 };
+
+// private methods
 
 TeeAdViz.prototype.setViews = function(except, xDomain, yDomain) {
 	var plots = [this.measurementsPlot, this.anomalyscoresPlot];
