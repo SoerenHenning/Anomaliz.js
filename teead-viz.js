@@ -27,6 +27,7 @@ function TeeAdViz(domContainer, config) {
 
   this.measurementsPlot.setZoomYAxis(false);
   this.anomalyscoresPlot.setZoomYAxis(false);
+	this.measurementsPlot.updateDomains([new Date() - 60*60*1000, new Date()], [0, 1], false); // TODO Domain
   this.anomalyscoresPlot.updateDomains(this.measurementsPlot.getXDomain(), [0, 1], false); // TODO Domain
 }
 
@@ -96,6 +97,7 @@ TeeAdViz.prototype.setThresholds = function() {
 
 TeeAdViz.prototype.setAnomalyScoreVisibility = function(visibility) {
 	//neceseccary or should this be done by the consumer? (via jQuery, css, etc.)
+	//TODO remove
 };
 
 TeeAdViz.prototype.setPredictionVisibility = function(visibility) {
@@ -112,4 +114,8 @@ TeeAdViz.prototype.setViews = function(except, xDomain, yDomain) {
 			plot.updateDomains(xDomain, plot.getYDomain(), false);
 		}
 	});
-}
+};
+
+TeeAdViz.prototype.plotAnomalyStates = function() {
+
+};
