@@ -34,7 +34,7 @@ function TeeAdViz(domContainer, config) {
 
   this.measurementsPlot.setZoomYAxis(false);
   this.anomalyscoresPlot.setZoomYAxis(false);
-	this.measurementsPlot.updateDomains([this.defaultStartTime - this.defaultTimeSpan, this.defaultStartTime], this.defaultMeasurementsYDomain, false); // TODO Domain
+	this.measurementsPlot.updateDomains([this.defaultStartTime - this.defaultTimeSpan, this.defaultStartTime], this.defaultMeasurementsYDomain, false);
   this.anomalyscoresPlot.updateDomains(this.measurementsPlot.getXDomain(), this.defaultAnomalyscoresYDomain, false);
 }
 
@@ -42,18 +42,15 @@ function TeeAdViz(domContainer, config) {
 
 TeeAdViz.prototype.setMeasurements = function(measurementsSet) {
 
-	var values = this.values;
 	var anomalystates = [];
-	var thresholds = this.thresholds;
-	//TODO javascript for each
-	$.each(measurementsSet, function(key, value) {
-		values.measurements.push([value.time, value.measurement]);
-		values.predictions.push([value.time, value.prediction]);
-		values.anomalyscores.push([value.time, value.anomalyscore]);
-		if (value.anomalyscore <= thresholds[0] || value.anomalyscore >= thresholds[1]) {
+	measurementsSet.forEach(function(value) {
+		this.values.measurements.push([value.time, value.measurement]);
+		this.values.predictions.push([value.time, value.prediction]);
+		this.values.anomalyscores.push([value.time, value.anomalyscore]);
+		if (value.anomalyscore <= this.thresholds[0] || value.anomalyscore >= this.thresholds[1]) {
 			anomalystates.push(value.time); // Push time to list of anomaly states
 		}
-	});
+	}, this);
 
 	this.measurementsPlot.removeDataSet("measurements");
 	this.measurementsPlot.removeDataSet("predictions");
@@ -120,13 +117,11 @@ TeeAdViz.prototype.setThresholds = function() {
 	}
 
 	var anomalystates = [];
-	//TODO javascript for each
-	var thresholds = this.thresholds;
-	$.each(this.values.anomalyscores, function(key, value) {
-		if (value[1] <= thresholds[0] || value[1] >= thresholds[1]) {
+	this.values.anomalyscores.forEach(function(value) {
+		if (value[1] <= this.thresholds[0] || value[1] >= this.thresholds[1]) {
 			anomalystates.push(value[0]); // Push time to list of anomaly states
 		}
-	});
+	}, this);
 	this.measurementsPlot.setIndicatorDataSet(anomalystates, false, false);
 };
 
@@ -146,8 +141,7 @@ TeeAdViz.prototype.setPredictionVisibility = function(visibility) {
 TeeAdViz.prototype.setViews = function(except, xDomain, yDomain) {
 	var plots = [this.measurementsPlot, this.anomalyscoresPlot];
 
-	//TODO javascript for each
-	$.each(plots, function(key, plot) {
+	plots.forEach(function(plot) {
 		if (plot != except) {
 			plot.updateDomains(xDomain, plot.getYDomain(), false);
 		}

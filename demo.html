@@ -39,7 +39,7 @@ $(document).ready(function() {
     reader.readAsText(file);
   });
 
-  visualization.setMeasurements({});
+  visualization.setMeasurements([]);
   setInterval(requestNewData, 1000);
   function requestNewData() {
     visualization.addMeasurements([
