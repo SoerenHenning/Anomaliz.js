@@ -73,24 +73,19 @@ TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
 	var beforeCalculatedXDomain = this.measurementsPlot.calculateXDomain();
 	var beforeActualXDomain = this.measurementsPlot.getXDomain();
 
-	var measurementsPlot = this.measurementsPlot;
-	var anomalyscoresPlot = this.anomalyscoresPlot;
-	var thresholds = this.thresholds;
-	var values = this.values;
-	//TODO javascript for each
-	$.each(measurementsSet, function(key, value) {
+	measurementsSet.forEach(function(value) {
 		// This updated also this.values
-		measurementsPlot.addDataPoint("measurements", [value.time, value.measurement], false, false);
+		this.measurementsPlot.addDataPoint("measurements", [value.time, value.measurement], false, false);
 		if (this.predictionVisibility) {
-			measurementsPlot.addDataPoint("predictions", [value.time, value.prediction], false, false);
+			this.measurementsPlot.addDataPoint("predictions", [value.time, value.prediction], false, false);
 		} else {
-			values.predictions.push([value.time, value.prediction]);
+			this.values.predictions.push([value.time, value.prediction]);
 		}
-		if (value.anomalyscore <= thresholds[0] || value.anomalyscore >= thresholds[1]) {
-			measurementsPlot.addIndicatorDataPoint(value.time, false, false);
+		if (value.anomalyscore <= this.thresholds[0] || value.anomalyscore >= this.thresholds[1]) {
+			this.measurementsPlot.addIndicatorDataPoint(value.time, false, false);
 		}
-		anomalyscoresPlot.addDataPoint("anomalyscores", [value.time, value.anomalyscore], false, false);
-	});
+		this.anomalyscoresPlot.addDataPoint("anomalyscores", [value.time, value.anomalyscore], false, false);
+	}, this);
 
 	var afterCalculatedXDomain = this.measurementsPlot.calculateXDomain();
 	var afterActualXDomain = this.measurementsPlot.getXDomain();
@@ -98,7 +93,7 @@ TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
 	if (beforeCalculatedXDomain[1] <= beforeActualXDomain[1] && afterCalculatedXDomain[1] > afterActualXDomain[1]) {
 		var shifting = afterCalculatedXDomain[1] - beforeCalculatedXDomain[1];
 		var xDomain = [this.measurementsPlot.getXDomain()[0]*1 + shifting  , this.measurementsPlot.getXDomain()[1]*1 + shifting];
-		this.measurementsPlot.updateDomains(xDomain, measurementsPlot.getYDomain(), false);
+		this.measurementsPlot.updateDomains(xDomain, this.measurementsPlot.getYDomain(), false);
 	}
 	this.updateDomains();
 };
