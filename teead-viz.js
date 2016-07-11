@@ -23,7 +23,8 @@ function TeeAdViz(domContainer, config) {
 
   this.measurementsPlot = new CanvasTimeSeriesIndicatorPlot(domContainer.append("div").attr("class", this.measurementsClass), [this.size[0], this.size[1][0]], {
     yAxisLabel: this.measurementsAxisLabel,
-    updateViewCallback: (this.setViews).bind(this)
+    updateViewCallback: (this.setViews).bind(this),
+		indicatorColor: this.indicatorColor
   });
   this.anomalyscoresPlot = new CanvasTimeSeriesPlot(domContainer.append("div").attr("class", this.anomalyscoresClass), [this.size[0], this.size[1][1]], {
     yAxisLabel: this.anomalyscoresAxisLabel,
