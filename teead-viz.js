@@ -63,7 +63,7 @@ TeeAdViz.prototype.setMeasurements = function(measurementsSet) {
 	this.anomalyscoresPlot.addDataSet("anomalyscores", "", this.values.anomalyscores, this.anomalyscoresColor, false, false);
 
 	this.measurementsPlot.updateDomains(this.measurementsPlot.calculateXDomain(), this.measurementsPlot.getYDomain(), true);
-	this.updateYDomains();
+	this.updateDomains();
 };
 
 TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
@@ -92,7 +92,7 @@ TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
 		var xDomain = [this.measurementsPlot.getXDomain()[0]*1 + shifting  , this.measurementsPlot.getXDomain()[1]*1 + shifting];
 		this.measurementsPlot.updateDomains(xDomain, measurementsPlot.getYDomain(), false);
 	}
-	this.updateYDomains();
+	this.updateDomains();
 };
 
 TeeAdViz.prototype.setThresholds = function() {
@@ -118,7 +118,7 @@ TeeAdViz.prototype.setPredictionVisibility = function(visibility) {
 	if (this.predictionVisibility) {
 		this.measurementsPlot.removeDataSet("predictions");
 		this.measurementsPlot.addDataSet("predictions", "", this.values.predictions, "steelblue", false, false); //TODO color
-		this.updateYDomains();
+		this.updateDomains();
 	} else {
 		this.measurementsPlot.removeDataSet("predictions");
 	}
@@ -137,8 +137,7 @@ TeeAdViz.prototype.setViews = function(except, xDomain, yDomain) {
 	});
 };
 
-//TODO rename to updateDomains
-TeeAdViz.prototype.updateYDomains = function() {
+TeeAdViz.prototype.updateDomains = function() {
 	var measurementsYDomain = this.measurementsPlot.calculateYDomain();
 	if (this.measurementsPlotStartWithZero) {
 		measurementsYDomain[0] = 0;
