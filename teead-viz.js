@@ -15,8 +15,10 @@ function TeeAdViz(domContainer, config) {
 	this.anomalyscoresClass = "anomalyscores"; //TODO config
 	this.measurementsPlotStartWithZero = true;  //TODO config
 	this.indicatorOffset = 50; //in px //TODO config
-	this.defaultMeasurementsDomain = [0,1] //TODO config
-	this.defaultAnomalyscoresDomain = [0,1] //TODO config
+	this.defaultTimeSpan = 60*1000; // one minute //TODO config
+	this.defaultStartTime = new Date(); //TODO config
+	this.defaultMeasurementsYDomain = [0,1]; //TODO config
+	this.defaultAnomalyscoresYDomain = [0,1]; //TODO config
 
 	this.values = {measurements: [], predictions: [], anomalyscores: []};
 
@@ -32,8 +34,8 @@ function TeeAdViz(domContainer, config) {
 
   this.measurementsPlot.setZoomYAxis(false);
   this.anomalyscoresPlot.setZoomYAxis(false);
-	this.measurementsPlot.updateDomains([new Date() - 60*60*1000, new Date()], this.defaultMeasurementsDomain, false); // TODO Domain
-  this.anomalyscoresPlot.updateDomains(this.measurementsPlot.getXDomain(), this.defaultAnomalyscoresDomain, false);
+	this.measurementsPlot.updateDomains([this.defaultStartTime - this.defaultTimeSpan, this.defaultStartTime], this.defaultMeasurementsYDomain, false); // TODO Domain
+  this.anomalyscoresPlot.updateDomains(this.measurementsPlot.getXDomain(), this.defaultAnomalyscoresYDomain, false);
 }
 
 // public interface
@@ -64,13 +66,16 @@ TeeAdViz.prototype.setMeasurements = function(measurementsSet) {
 	this.measurementsPlot.setIndicatorDataSet(anomalystates, false, false);
 	this.anomalyscoresPlot.addDataSet("anomalyscores", "", this.values.anomalyscores, this.anomalyscoresColor, false, false);
 
-	this.measurementsPlot.updateDomains(this.measurementsPlot.calculateXDomain(), this.measurementsPlot.getYDomain(), true);
-	this.updateDomains();
+	if (this.values.measurements.length != 0 || this.values.predictions.length != 0 || this.values.anomalyscores.length != 0) {
+		this.measurementsPlot.updateDomains(this.measurementsPlot.calculateXDomain(), this.measurementsPlot.getYDomain(), true);
+		this.updateDomains();
+	}
 };
 
 TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
 	var beforeCalculatedXDomain = this.measurementsPlot.calculateXDomain();
 	var beforeActualXDomain = this.measurementsPlot.getXDomain();
+	var beforeEmpty = this.values.measurements.length == 0 && this.values.predictions.length == 0 && this.values.anomalyscores.length == 0;
 
 	measurementsSet.forEach(function(value) {
 		// This updated also this.values
@@ -89,10 +94,20 @@ TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
 	var afterCalculatedXDomain = this.measurementsPlot.calculateXDomain();
 	var afterActualXDomain = this.measurementsPlot.getXDomain();
 
-	if (beforeCalculatedXDomain[1] <= beforeActualXDomain[1] && afterCalculatedXDomain[1] > afterActualXDomain[1]) {
-		var shifting = afterCalculatedXDomain[1] - beforeCalculatedXDomain[1];
-		var xDomain = [this.measurementsPlot.getXDomain()[0]*1 + shifting  , this.measurementsPlot.getXDomain()[1]*1 + shifting];
+	if (beforeEmpty) {
+		var xDomain;
+		if (afterCalculatedXDomain[1] - afterCalculatedXDomain[0] < this.defaultTimeSpan) {
+			xDomain = [afterCalculatedXDomain[0], afterCalculatedXDomain[0] + this.defaultTimeSpan];
+		} else {
+			xDomain = [afterCalculatedXDomain[1] - this.defaultTimeSpan, afterCalculatedXDomain[1]];
+		}
 		this.measurementsPlot.updateDomains(xDomain, this.measurementsPlot.getYDomain(), false);
+	} else {
+		if (beforeCalculatedXDomain[1] <= beforeActualXDomain[1] && afterCalculatedXDomain[1] > afterActualXDomain[1]) {
+			var shifting = afterCalculatedXDomain[1] - beforeCalculatedXDomain[1];
+			var xDomain = [this.measurementsPlot.getXDomain()[0]*1 + shifting  , this.measurementsPlot.getXDomain()[1]*1 + shifting];
+			this.measurementsPlot.updateDomains(xDomain, this.measurementsPlot.getYDomain(), false);
+		}
 	}
 	this.updateDomains();
 };
