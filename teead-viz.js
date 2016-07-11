@@ -58,7 +58,9 @@ TeeAdViz.prototype.setMeasurements = function(measurementsSet) {
 	this.anomalyscoresPlot.removeDataSet("anomalyscores");
 
 	this.measurementsPlot.addDataSet("measurements", "", this.values.measurements, this.measurementsColor, false, false);
-	this.measurementsPlot.addDataSet("predictions", "", this.values.predictions, this.predictionsColor, false, false);
+	if (this.predictionVisibility) {
+		this.measurementsPlot.addDataSet("predictions", "", this.values.predictions, this.predictionsColor, false, false);
+	}
 	this.measurementsPlot.setIndicatorDataSet(anomalystates, false, false); //TODO color?
 	this.anomalyscoresPlot.addDataSet("anomalyscores", "", this.values.anomalyscores, this.anomalyscoresColor, false, false);
 
@@ -73,11 +75,16 @@ TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
 	var measurementsPlot = this.measurementsPlot;
 	var anomalyscoresPlot = this.anomalyscoresPlot;
 	var thresholds = this.thresholds;
+	var values = this.values;
 	//TODO javascript for each
 	$.each(measurementsSet, function(key, value) {
 		// This updated also this.values
 		measurementsPlot.addDataPoint("measurements", [value.time, value.measurement], false, false);
-		measurementsPlot.addDataPoint("predictions", [value.time, value.prediction], false, false);
+		if (this.predictionVisibility) {
+			measurementsPlot.addDataPoint("predictions", [value.time, value.prediction], false, false);
+		} else {
+			values.predictions.push([value.time, value.prediction]);
+		}
 		if (value.anomalyscore <= thresholds[0] || value.anomalyscore >= thresholds[1]) {
 			measurementsPlot.addIndicatorDataPoint(value.time, false, false);
 		}
