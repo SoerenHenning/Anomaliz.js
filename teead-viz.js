@@ -15,6 +15,8 @@ function TeeAdViz(domContainer, config) {
 	this.anomalyscoresClass = "anomalyscores"; //TODO config
 	this.measurementsPlotStartWithZero = true;  //TODO config
 	this.indicatorOffset = 50; //in px //TODO config
+	this.defaultMeasurementsDomain = [0,1] //TODO config
+	this.defaultAnomalyscoresDomain = [0,1] //TODO config
 
 	//this.size
   var size = this.size; //TODO
@@ -33,8 +35,8 @@ function TeeAdViz(domContainer, config) {
 
   this.measurementsPlot.setZoomYAxis(false);
   this.anomalyscoresPlot.setZoomYAxis(false);
-	this.measurementsPlot.updateDomains([new Date() - 60*60*1000, new Date()], [0, 1], false); // TODO Domain
-  this.anomalyscoresPlot.updateDomains(this.measurementsPlot.getXDomain(), [0, 1], false); // TODO Domain
+	this.measurementsPlot.updateDomains([new Date() - 60*60*1000, new Date()], this.defaultMeasurementsDomain, false); // TODO Domain
+  this.anomalyscoresPlot.updateDomains(this.measurementsPlot.getXDomain(), this.defaultAnomalyscoresDomain, false); // TODO Domain
 }
 
 // public interface
