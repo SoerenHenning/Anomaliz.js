@@ -18,9 +18,6 @@ function TeeAdViz(domContainer, config) {
 	this.defaultMeasurementsDomain = [0,1] //TODO config
 	this.defaultAnomalyscoresDomain = [0,1] //TODO config
 
-	//this.size
-  var size = this.size; //TODO
-
 	this.values = {measurements: [], predictions: [], anomalyscores: []};
 
   this.measurementsPlot = new CanvasTimeSeriesIndicatorPlot(domContainer.append("div").attr("class", this.measurementsClass), [this.size[0], this.size[1][0]], {
@@ -36,7 +33,7 @@ function TeeAdViz(domContainer, config) {
   this.measurementsPlot.setZoomYAxis(false);
   this.anomalyscoresPlot.setZoomYAxis(false);
 	this.measurementsPlot.updateDomains([new Date() - 60*60*1000, new Date()], this.defaultMeasurementsDomain, false); // TODO Domain
-  this.anomalyscoresPlot.updateDomains(this.measurementsPlot.getXDomain(), this.defaultAnomalyscoresDomain, false); // TODO Domain
+  this.anomalyscoresPlot.updateDomains(this.measurementsPlot.getXDomain(), this.defaultAnomalyscoresDomain, false);
 }
 
 // public interface
@@ -150,8 +147,4 @@ TeeAdViz.prototype.updateDomains = function() {
 	measurementsYDomain[1] = measurementsYDomain[1] + ((this.indicatorOffset / this.size[1][0]) * (measurementsYDomain[1] - measurementsYDomain[0]));
 	this.measurementsPlot.updateDomains(this.measurementsPlot.getXDomain(), measurementsYDomain, false);
 	this.anomalyscoresPlot.updateDomains(this.measurementsPlot.getXDomain(), this.anomalyscoresPlot.calculateYDomain(), false);
-};
-
-TeeAdViz.prototype.plotAnomalyStates = function() {
-
 };
