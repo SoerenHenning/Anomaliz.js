@@ -31,7 +31,7 @@ CanvasTimeSeriesIndicatorPlot.prototype.setIndicatorDataSet = function(dataSet, 
 };
 
 CanvasTimeSeriesIndicatorPlot.prototype.addIndicatorDataPoint = function(dataPoint, updateDomains, copyData) {
-	if (this.indicatorData.length > 0 && this.indicatorData[indicatorData.length-1][0] > dataPoint[0]) {
+	if (this.indicatorData.length > 0 && this.indicatorData[this.indicatorData.length-1][0] > dataPoint[0]) {
 		return;
 	}
 	this.indicatorData.push(copyData ? dataPoint.slice(0) : dataPoint);

@@ -13,6 +13,10 @@
 </head>
 <body>
 
+  <div>
+    <input type="file" id="file" name="file" />
+  </div>
+
 <div id="maincontainer">
 
 </div>
@@ -24,6 +28,36 @@ function getDemoPlotSize() {
 
 $(document).ready(function() {
 	var visualization = new TeeAdViz(d3.select("#maincontainer"), {});
+
+
+  $('#file').change(function(evt) {
+    var file = evt.target.files[0];
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var dataSets = $.parseJSON(e.target.result);
+        visualization.setMeasurements(dataSets);
+    };
+    reader.readAsText(file);
+  });
+
+  setInterval(requestNewData, 1000);
+  function requestNewData() {
+    visualization.addMeasurements([
+      {
+        "time": new Date().getTime(),
+        "measurement": 2500 * Math.random(),
+        "prediction": 3000 * Math.random(),
+        "anomalyscore": 5 * Math.random()
+      },
+      {
+        "time": new Date().getTime() + 100,
+        "measurement": 2500 * Math.random(),
+        "prediction": 3000 * Math.random(),
+        "anomalyscore": 5 * Math.random()
+      }
+    ]);
+  }
+
 });
 </script>
 </body>
