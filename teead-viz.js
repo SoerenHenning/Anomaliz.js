@@ -15,7 +15,9 @@
 function TeeAdViz(domContainer, config) {
 	config = config || {};
 
-	this.size = [600, [300, 100]];  //in px
+  this.width = config.width || 600; // in px //TODO use max width
+  this.measurementsHeight = config.measurementsHeight || 300; // in px
+  this.anomalyscoresHeight = config.anomalyscoresHeight || 100; // in px
 	this.thresholds = config.thresholds || [-0, 0]; // lower is <= 0, upper is >= 0
 	this.predictionVisibility = config.predictionVisibility || true;
 	this.measurementsAxisLabel = config.measurementsAxisLabel || "Measurement";
@@ -35,12 +37,12 @@ function TeeAdViz(domContainer, config) {
 
 	this.values = {measurements: [], predictions: [], anomalyscores: []};
 
-  this.measurementsPlot = new CanvasTimeSeriesIndicatorPlot(domContainer.append("div").attr("class", this.measurementsClass), [this.size[0], this.size[1][0]], {
+  this.measurementsPlot = new CanvasTimeSeriesIndicatorPlot(domContainer.append("div").attr("class", this.measurementsClass), [this.width, this.measurementsHeight], {
     yAxisLabel: this.measurementsAxisLabel,
     updateViewCallback: (this.setViews).bind(this),
 		indicatorColor: this.indicatorColor
   });
-  this.anomalyscoresPlot = new CanvasTimeSeriesPlot(domContainer.append("div").attr("class", this.anomalyscoresClass), [this.size[0], this.size[1][1]], {
+  this.anomalyscoresPlot = new CanvasTimeSeriesPlot(domContainer.append("div").attr("class", this.anomalyscoresClass), [this.width, this.anomalyscoresHeight], {
     yAxisLabel: this.anomalyscoresAxisLabel,
     updateViewCallback: (this.setViews).bind(this)
   });
@@ -166,7 +168,7 @@ TeeAdViz.prototype.updateDomains = function() {
 	if (this.measurementsPlotStartWithZero) {
 		measurementsYDomain[0] = 0;
 	}
-	measurementsYDomain[1] = measurementsYDomain[1] + ((this.indicatorOffset / this.size[1][0]) * (measurementsYDomain[1] - measurementsYDomain[0]));
+	measurementsYDomain[1] = measurementsYDomain[1] + ((this.indicatorOffset / this.measurementsHeight) * (measurementsYDomain[1] - measurementsYDomain[0]));
 	this.measurementsPlot.updateDomains(this.measurementsPlot.getXDomain(), measurementsYDomain, false);
 	this.anomalyscoresPlot.updateDomains(this.measurementsPlot.getXDomain(), this.anomalyscoresPlot.calculateYDomain(), false);
 };
