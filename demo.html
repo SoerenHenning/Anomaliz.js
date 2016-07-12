@@ -27,7 +27,9 @@ function getDemoPlotSize() {
 }
 
 $(document).ready(function() {
-	var visualization = new TeeAdViz(d3.select("#maincontainer"), {});
+	var visualization = new TeeAdViz(d3.select("#maincontainer"), {
+    thresholds: [-0.2, 1.2]
+  });
 
   $('#file').change(function(evt) {
     var file = evt.target.files[0];
