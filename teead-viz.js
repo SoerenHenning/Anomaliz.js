@@ -15,23 +15,23 @@
 function TeeAdViz(domContainer, config) {
 	config = config || {};
 
-	this.size = [600, [300, 100]];  //in px //TODO config
-	this.thresholds = [-0.2, 1.2]; // lower is <= 0, upper is >= 0 //TODO config
-	this.predictionVisibility = true; //TODO config
-	this.measurementsAxisLabel = "Measurement"; //TODO config
-	this.anomalyscoresAxisLabel = "Anomaly Score"; //TODO config
-	this.measurementsColor = "orange";
-	this.predictionsColor = "steelblue";
-	this.anomalyscoresColor = "red";
-	this.indicatorColor = "red";
-	this.measurementsClass = "measurements"; //TODO config
-	this.anomalyscoresClass = "anomalyscores"; //TODO config
-	this.measurementsPlotStartWithZero = true;  //TODO config
-	this.indicatorOffset = 50; //in px //TODO config
-	this.defaultTimeSpan = 60*1000; // one minute //TODO config
-	this.defaultStartTime = new Date(); //TODO config
-	this.defaultMeasurementsYDomain = [0,1]; //TODO config
-	this.defaultAnomalyscoresYDomain = [0,1]; //TODO config
+	this.size = [600, [300, 100]];  //in px
+	this.thresholds = config.thresholds || [-0, 0]; // lower is <= 0, upper is >= 0
+	this.predictionVisibility = config.predictionVisibility || true;
+	this.measurementsAxisLabel = config.measurementsAxisLabel || "Measurement";
+	this.anomalyscoresAxisLabel = config.anomalyscoresAxisLabel || "Anomaly Score";
+	this.measurementsColor = config.measurementsColor || "orange";
+	this.predictionsColor = config.predictionsColor || "steelblue";
+	this.anomalyscoresColor = config.anomalyscoresColor || "red";
+	this.indicatorColor = config.indicatorColor || "red";
+	this.measurementsClass = config.measurementsClass || "measurements";
+	this.anomalyscoresClass = config.anomalyscoresClass || "anomalyscores";
+	this.measurementsPlotStartWithZero = config.measurementsPlotStartWithZero || true;
+	this.indicatorOffset = config.indicatorOffset || 50; // in px
+	this.defaultTimeSpan = config.defaultTimeSpan || 60*1000; // one minute
+	this.defaultStartTime = config.defaultStartTime || new Date();
+	this.defaultMeasurementsYDomain = config.defaultMeasurementsYDomain || [0,1];
+	this.defaultAnomalyscoresYDomain = config.defaultAnomalyscoresYDomain || [0,1];
 
 	this.values = {measurements: [], predictions: [], anomalyscores: []};
 
