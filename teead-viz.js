@@ -18,7 +18,7 @@ function TeeAdViz(domContainer, config) {
   this.width = config.width || 600; // in px //TODO use max width
   this.measurementsHeight = config.measurementsHeight || 300; // in px
   this.anomalyscoresHeight = config.anomalyscoresHeight || 100; // in px
-	this.thresholds = config.thresholds || [-0, 0]; // lower is <= 0, upper is >= 0
+	this.thresholds = config.thresholds || [null, null]; // usually lower is <= 0, upper is >= 0; null for no threshold
 	this.predictionVisibility = config.predictionVisibility || true;
 	this.measurementsAxisLabel = config.measurementsAxisLabel || "Measurement";
 	this.anomalyscoresAxisLabel = config.anomalyscoresAxisLabel || "Anomaly Score";
@@ -62,7 +62,7 @@ TeeAdViz.prototype.setMeasurements = function(measurementsSet) {
 		this.values.measurements.push([value.time, value.measurement]);
 		this.values.predictions.push([value.time, value.prediction]);
 		this.values.anomalyscores.push([value.time, value.anomalyscore]);
-		if (value.anomalyscore <= this.thresholds[0] || value.anomalyscore >= this.thresholds[1]) {
+		if ((this.thresholds[0] != null && value.anomalyscore <= this.thresholds[0]) || (this.thresholds[1] != null && value.anomalyscore >= this.thresholds[1])) {
 			anomalystates.push(value.time); // Push time to list of anomaly states
 		}
 	}, this);
@@ -97,7 +97,7 @@ TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
 		} else {
 			this.values.predictions.push([value.time, value.prediction]);
 		}
-		if (value.anomalyscore <= this.thresholds[0] || value.anomalyscore >= this.thresholds[1]) {
+		if ((this.thresholds[0] != null && value.anomalyscore <= this.thresholds[0]) || (this.thresholds[1] != null && value.anomalyscore >= this.thresholds[1])) {
 			this.measurementsPlot.addIndicatorDataPoint(value.time, false, false);
 		}
 		this.anomalyscoresPlot.addDataPoint("anomalyscores", [value.time, value.anomalyscore], false, false);
@@ -126,14 +126,14 @@ TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
 
 TeeAdViz.prototype.setThresholds = function() {
 	if (arguments.length >= 2) {
-		this.thresholds = [- Math.abs(arguments[0]), arguments[1]];
+		this.thresholds = [(arguments[0] == null) ? null : - Math.abs(arguments[0]), arguments[1]];
 	} else if (arguments.length == 1) {
 		this.thresholds = [arguments[0], arguments[0]];
 	}
 
 	var anomalystates = [];
 	this.values.anomalyscores.forEach(function(value) {
-		if (value[1] <= this.thresholds[0] || value[1] >= this.thresholds[1]) {
+		if ((this.thresholds[0] != null && value[1] <= this.thresholds[0]) || (this.thresholds[1] != null && value[1] >= this.thresholds[1])) {
 			anomalystates.push(value[0]); // Push time to list of anomaly states
 		}
 	}, this);
