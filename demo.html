@@ -28,6 +28,8 @@ function getDemoPlotSize() {
 
 $(document).ready(function() {
 	var visualization = new TeeAdViz(d3.select("#maincontainer"), {
+    width: window.innerWidth-100,
+    measurementsHeight: Math.round(0.35*(window.innerWidth-100)),
     thresholds: [-0.2, 3.5]
   });
 

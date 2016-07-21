@@ -15,7 +15,7 @@
 function TeeAdViz(domContainer, config) {
 	config = config || {};
 
-  this.width = config.width || 600; // in px //TODO use max width
+  this.width = config.width || 600; // in px
   this.measurementsHeight = config.measurementsHeight || 300; // in px
   this.anomalyscoresHeight = config.anomalyscoresHeight || 100; // in px
 	this.thresholds = config.thresholds || [null, null]; // usually lower is <= 0, upper is >= 0; null for no threshold
