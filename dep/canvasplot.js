@@ -26,6 +26,8 @@ function CanvasDataPlot(parentElement, canvasDimensions, config) {
 	this.updateViewCallback = config.updateViewCallback || null;
 	this.parent = parentElement;
 
+	this.disableLegend = config.disableLegend || false;
+	this.invertYAxis = config.invertYAxis || false;
 	this.gridColor = config.gridColor || "#DFDFDF";
 	this.markerLineWidth = config.markerLineWidth || 1;
 	this.markerRadius = config.markerRadius || 3.0;
@@ -49,15 +51,17 @@ function CanvasDataPlot(parentElement, canvasDimensions, config) {
 	this.height = this.totalHeight - this.margin.top - this.margin.bottom;
 
 	this.div = this.parent.append("div")
-		.attr("class", "chart")
+		.attr("class", "cvpChart")
 		.style("width", this.totalWidth+"px")
 		.style("height", this.totalHeight+"px");
 	this.d3Canvas = this.div.append("canvas")
+		.attr("class", "cvpCanvas")
 		.attr("width", this.width)
 		.attr("height", this.height)
 		.style("padding", this.margin.top + "px " + this.margin.right + "px " + this.margin.bottom + "px " + this.margin.left + "px");
 	this.canvas = this.d3Canvas.node().getContext("2d");
 	this.svg = this.div.append("svg")
+		.attr("class", "cvpSVG")
 		.attr("width", this.totalWidth)
 		.attr("height", this.totalHeight);
 	this.svgTranslateGroup = this.svg.append("g")
@@ -71,10 +75,10 @@ function CanvasDataPlot(parentElement, canvasDimensions, config) {
 	this.setupYScaleAndAxis();
 
 	this.yAxisGroup = this.svgTranslateGroup.append("g")
-		.attr("class", "y axis")
+		.attr("class", "y cvpAxis")
 		.call(this.yAxis);
 	this.xAxisGroup = this.svgTranslateGroup.append("g")
-		.attr("class", "x axis")
+		.attr("class", "x cvpAxis")
 		.attr("transform", "translate(0,"+this.height+")")
 		.call(this.xAxis);
 
@@ -82,7 +86,7 @@ function CanvasDataPlot(parentElement, canvasDimensions, config) {
 	this.yAxisLabel = null;
 	if(this.xAxisLabelText.length > 0) {
 		this.xAxisLabel = this.svgTranslateGroup.append("text")
-			.attr("class", "label")
+			.attr("class", "cvpLabel")
 			.attr("x", Math.round(0.5*this.width))
 			.attr("y", this.height + 40)
 			.attr("text-anchor", "middle")
@@ -90,7 +94,7 @@ function CanvasDataPlot(parentElement, canvasDimensions, config) {
 	}
 	if(this.yAxisLabelText.length > 0) {
 		this.yAxisLabel = this.svg.append("text")
-			.attr("class", "label")
+			.attr("class", "cvpLabel")
 			.attr("x", Math.round(-0.5*this.height - this.margin.top))
 			.attr("y", 15)
 			.attr("transform", "rotate(-90)")
@@ -99,6 +103,7 @@ function CanvasDataPlot(parentElement, canvasDimensions, config) {
 	}
 	this.tooltip = null;
 	this.legend = null;
+	this.legendBG = null;
 	this.legendWidth = 0;
 
 	//this.updateDisplayIndices();
@@ -338,7 +343,7 @@ CanvasDataPlot.prototype.setupXScaleAndAxis = function() {
 CanvasDataPlot.prototype.setupYScaleAndAxis = function() {
 	this.yScale = d3.scale.linear()
 		.domain(this.calculateYDomain())
-		.range([this.height, 0])
+		.range(this.invertYAxis ? [0, this.height] : [this.height, 0])
 		.nice();
 
 	this.yAxis = d3.svg.axis()
@@ -389,10 +394,10 @@ CanvasDataPlot.prototype.showTooltip = function(position, color, xText, yText) {
 	}
 
 	this.tooltip = this.svgTranslateGroup.append("g")
-		.attr("class", "plottooltip")
+		.attr("class", "cvpTooltip")
 		.attr("transform", "translate("+position[0]+", "+(position[1] - this.markerRadius - 2)+")");
 	var tooltipBG = this.tooltip.append("path")
-		.attr("class", "plottooltipbg")
+		.attr("class", "cvpTooltipBG")
 		.attr("d", "M0 0 L-10 -10 L-100 -10 L-100 -45 L100 -45 L100 -10 L10 -10 Z")
 		.attr("stroke", color)
 		.attr("vector-effect", "non-scaling-stroke");
@@ -418,6 +423,9 @@ CanvasDataPlot.prototype.removeTooltip = function() {
 };
 
 CanvasDataPlot.prototype.updateLegend = function() {
+	if(this.disableLegend) {
+		return;
+	}
 	if(this.legend) {
 		this.legend.remove();
 		this.legend = null;
@@ -428,10 +436,10 @@ CanvasDataPlot.prototype.updateLegend = function() {
 	}
 
 	this.legend = this.svgTranslateGroup.append("g")
-		.attr("class", "legend")
+		.attr("class", "cvpLegend")
 		.attr("transform", "translate("+(this.width + this.margin.right + 1)+", "+this.legendMargin+")");
-	var legendBG = this.legend.append("rect")
-		.attr("class", "legendbg")
+	this.legendBG = this.legend.append("rect")
+		.attr("class", "cvpLegendBG")
 		.attr("x", 0)
 		.attr("y", 0)
 		.attr("width", 250)
@@ -453,7 +461,7 @@ CanvasDataPlot.prototype.updateLegend = function() {
 		maxTextLen = Math.max(maxTextLen, textElem.node().getComputedTextLength());
 	}).bind(this));
 	this.legendWidth = 3*this.legendXPadding + this.legendLineHeight + maxTextLen - 1;
-	legendBG.attr("width", this.legendWidth);
+	this.legendBG.attr("width", this.legendWidth);
 	this.legend
 		.attr("transform", "translate("+(this.width - this.legendWidth - this.legendMargin)+", "+this.legendMargin+")");
 };
@@ -559,6 +567,25 @@ function CanvasPlot_shallowObjectCopy(inObj) {
 		outObj[k] = original[k];
 	});
 	return outObj;
+}
+function CanvasPlot_appendToObject(obj, objToAppend) {
+	Object.keys(objToAppend).forEach(function(k) {
+		if(!obj.hasOwnProperty(k)) {
+			obj[k] = objToAppend[k];
+		}
+		else {
+			if(obj[k] !== null && typeof obj[k] === "object" && !Array.isArray(obj[k])) {
+				appendToObject(obj[k], objToAppend[k]);
+			}
+			else if(Array.isArray(obj[k]) && Array.isArray(objToAppend[k])) {
+				objToAppend[k].forEach(function(d) {
+					if(obj[k].indexOf(d) < 0) {
+						obj[k].push(d);
+					}
+				});
+			}
+		}
+	});
 }
 
 
@@ -709,9 +736,17 @@ CanvasTimeSeriesPlot.prototype.drawDataSet = function(dataIndex) {
 
 function CanvasVectorSeriesPlot(parentElement, canvasDimensions, config) {
 	// Data element format: [Date, y value, direction, magnitude]
+
+	this.vectorScale = config.vectorScale || 2.0e5;
+	this.scaleUnits = config.scaleUnits || "units";
+	this.scaleLength = config.scaleLength || 75;
+	this.scaleTextElem = null;
 	
 	var configCopy = CanvasPlot_shallowObjectCopy(config);
 	configCopy["showTooltips"] = false;
+	if(!("invertYAxis" in configCopy)) {
+		configCopy["invertYAxis"] = true;
+	}
 	
 	CanvasTimeSeriesPlot.call(this, parentElement, canvasDimensions, configCopy);
 }
@@ -720,6 +755,16 @@ CanvasVectorSeriesPlot.prototype = Object.create(CanvasTimeSeriesPlot.prototype)
 CanvasVectorSeriesPlot.prototype.updateTooltip = function() {
 	//TODO
 };
+
+CanvasVectorSeriesPlot.prototype.getMagnitudeScale = function() {
+	var xDomain = this.getXDomain();
+	return this.vectorScale * this.width / (xDomain[1] - xDomain[0]);
+};
+
+CanvasVectorSeriesPlot.prototype.drawCanvas = function() {
+	this.updateScaleText();
+	CanvasTimeSeriesPlot.prototype.drawCanvas.call(this);
+}
 
 CanvasVectorSeriesPlot.prototype.drawDataSet = function(dataIndex) {
 	var d = this.data[dataIndex];
@@ -741,11 +786,13 @@ CanvasVectorSeriesPlot.prototype.drawDataSet = function(dataIndex) {
 
 	this.canvas.lineWidth = this.plotLineWidth;
 	this.canvas.strokeStyle = this.dataColors[dataIndex];
+	var magScale = this.getMagnitudeScale();
+	var tipSize = 10*magScale;
 	for(var i=iStart+1; i<=iEnd; i=i+drawEvery) {
 		var startX = this.xScale(d[i][0]);
 		var startY = this.yScale(d[i][1]);
 		var dir = -1.0*d[i][2] + 0.5*Math.PI;
-		var mag = d[i][3];
+		var mag = magScale*d[i][3];
 		
 		var cosDir = Math.cos(dir);
 		var sinDir = Math.sin(dir);
@@ -759,7 +806,6 @@ CanvasVectorSeriesPlot.prototype.drawDataSet = function(dataIndex) {
 		this.canvas.lineTo(endX, endY);
 		this.canvas.stroke();
 		
-		var tipSize = 8;
 		this.canvas.beginPath();
 		this.canvas.moveTo(startX+(mag-tipSize)*cosDir - 0.5*tipSize*sinDir,
 			startY-((mag-tipSize)*sinDir + 0.5*tipSize*cosDir));
@@ -778,6 +824,49 @@ CanvasVectorSeriesPlot.prototype.drawDataSet = function(dataIndex) {
 	//		this.canvas.stroke();
 	//	}
 	//}
+};
+
+CanvasVectorSeriesPlot.prototype.updateScaleText = function() {
+	if(this.disableLegend || !this.scaleTextElem) {
+		return;
+	}
+	var newLabel = (this.scaleLength/this.getMagnitudeScale()).toFixed(1) + this.scaleUnits;
+	this.scaleTextElem.text(newLabel);
+	var newLength = this.scaleTextElem.node().getComputedTextLength() + this.scaleLength + 3*this.legendXPadding;
+	var lengthDiff = this.legendWidth - newLength; 
+	if(lengthDiff < 0) {
+		this.legendWidth -= lengthDiff;
+		this.legendBG.attr("width", this.legendWidth);
+		this.legend
+			.attr("transform", "translate("+(this.width - this.legendWidth - this.legendMargin)+", "+this.legendMargin+")");
+	}
+};
+
+CanvasVectorSeriesPlot.prototype.updateLegend = function() {
+	if(this.disableLegend) {
+		return;
+	}
+	CanvasDataPlot.prototype.updateLegend.call(this);
+
+	if(!this.legend) {
+		return;
+	}
+
+	var oldHeight = parseInt(this.legendBG.attr("height"));
+	var newHeight = oldHeight + this.legendYPadding + this.legendLineHeight;
+	this.legendBG.attr("height", newHeight);
+
+	this.legend.append("rect")
+			.attr("x", this.legendXPadding)
+			.attr("y", newHeight - Math.floor((this.legendYPadding+0.5*this.legendLineHeight)) + 1)
+			.attr("width", this.scaleLength)
+			.attr("height", 2)
+			.attr("fill", "black")
+			.attr("stroke", "none");
+	this.scaleTextElem = this.legend.append("text")
+			.attr("x", 2*this.legendXPadding + this.scaleLength)
+			.attr("y", newHeight - this.legendYPadding);
+	this.updateScaleText();
 };
 
 
@@ -806,7 +895,14 @@ function CanvasDataPlotGroup(parentElement, plotDimensions, multiplePlots, syncP
 
 CanvasDataPlotGroup.prototype.addDataSet = function(plotType, uniqueID, displayName, dataSet, color, plotConfig) {
 	if(this.multiplePlots || this.plots.length < 1) {
-		var config = plotConfig ? CanvasPlot_shallowObjectCopy(plotConfig) : this.defaultConfig;
+		var config = null;
+		if(plotConfig) {
+			config = CanvasPlot_shallowObjectCopy(plotConfig);
+			CanvasPlot_appendToObject(config, this.defaultConfig);
+		}
+		else {
+			config = this.defaultConfig;
+		}
 		if(plotConfig && this.multiplePlots) {
 			config["updateViewCallback"] = (this.setViews).bind(this);
 		}
