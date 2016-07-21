@@ -39,11 +39,13 @@ function TeeAdViz(domContainer, config) {
 
   this.measurementsPlot = new CanvasTimeSeriesIndicatorPlot(domContainer.append("div").attr("class", this.measurementsClass), [this.width, this.measurementsHeight], {
     yAxisLabel: this.measurementsAxisLabel,
+		disableLegend: true,
     updateViewCallback: (this.setViews).bind(this),
 		indicatorColor: this.indicatorColor
   });
   this.anomalyscoresPlot = new CanvasTimeSeriesPlot(domContainer.append("div").attr("class", this.anomalyscoresClass), [this.width, this.anomalyscoresHeight], {
     yAxisLabel: this.anomalyscoresAxisLabel,
+		disableLegend: true,
     updateViewCallback: (this.setViews).bind(this)
   });
 
