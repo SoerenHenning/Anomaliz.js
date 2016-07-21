@@ -29,7 +29,7 @@ function TeeAdViz(domContainer, config) {
 	this.measurementsClass = config.measurementsClass || "measurements";
 	this.anomalyscoresClass = config.anomalyscoresClass || "anomalyscores";
 	this.measurementsPlotStartWithZero = config.measurementsPlotStartWithZero || true;
-	this.indicatorOffset = config.indicatorOffset || 50; // in px
+	this.indicatorOffset = config.indicatorOffset || 65; // in px
 	this.defaultTimeSpan = config.defaultTimeSpan || 60*1000; // one minute
 	this.defaultStartTime = config.defaultStartTime || new Date();
 	this.defaultMeasurementsYDomain = config.defaultMeasurementsYDomain || [0,1];
