@@ -19,7 +19,8 @@ function TeeAdViz(domContainer, config) {
   this.measurementsHeight = config.measurementsHeight || 300; // in px
   this.anomalyscoresHeight = config.anomalyscoresHeight || 100; // in px
 	this.thresholds = config.thresholds || [null, null]; // usually lower is <= 0, upper is >= 0; null for no threshold
-	this.predictionVisibility = config.predictionVisibility || true;
+	this.predictionVisibility = config.predictionVisibility || false;
+	this.anomalyscoresVisibility = config.anomalyscoresVisibility || false;
 	this.measurementsAxisLabel = config.measurementsAxisLabel || "Measurement";
 	this.anomalyscoresAxisLabel = config.anomalyscoresAxisLabel || "Anomaly Score";
 	this.measurementsColor = config.measurementsColor || "orange";
@@ -36,14 +37,18 @@ function TeeAdViz(domContainer, config) {
 	this.defaultAnomalyscoresYDomain = config.defaultAnomalyscoresYDomain || [0,1];
 
 	this.values = {measurements: [], predictions: [], anomalyscores: []};
+	this.measurementsPlotContainer = domContainer.append("div").attr("class", this.measurementsClass);
+	this.anomalyscoresPlotContainer = domContainer.append("div").attr("class", this.anomalyscoresClass);
 
-  this.measurementsPlot = new CanvasTimeSeriesIndicatorPlot(domContainer.append("div").attr("class", this.measurementsClass), [this.width, this.measurementsHeight], {
+	this.anomalyscoresPlotContainer.attr("hidden",this.anomalyscoresVisibility ? null : true);
+
+  this.measurementsPlot = new CanvasTimeSeriesIndicatorPlot(this.measurementsPlotContainer, [this.width, this.measurementsHeight], {
     yAxisLabel: this.measurementsAxisLabel,
 		disableLegend: true,
     updateViewCallback: (this.setViews).bind(this),
 		indicatorColor: this.indicatorColor
   });
-  this.anomalyscoresPlot = new CanvasTimeSeriesPlot(domContainer.append("div").attr("class", this.anomalyscoresClass), [this.width, this.anomalyscoresHeight], {
+  this.anomalyscoresPlot = new CanvasTimeSeriesPlot(this.anomalyscoresPlotContainer, [this.width, this.anomalyscoresHeight], {
     yAxisLabel: this.anomalyscoresAxisLabel,
 		disableLegend: true,
     updateViewCallback: (this.setViews).bind(this)
@@ -151,6 +156,11 @@ TeeAdViz.prototype.setPredictionVisibility = function(visibility) {
 	} else {
 		this.measurementsPlot.removeDataSet("predictions");
 	}
+};
+
+TeeAdViz.prototype.setAnomalyScoreVisibility = function(visibility) {
+	this.anomalyscoresVisibility = visibility;
+	this.anomalyscoresPlotContainer.attr("hidden", visibility ? null : true);
 };
 
 // private methods
