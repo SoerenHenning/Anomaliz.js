@@ -14,24 +14,55 @@
 <body>
 
   <div>
-    <input type="file" id="file" name="file" />
+    <!--<input type="file" id="file" name="file" />-->
   </div>
 
 <div id="maincontainer">
-
 </div>
 
 <script type="text/javascript">
-function getDemoPlotSize() {
-	return [window.innerWidth-100, Math.round(0.45*(window.innerWidth-100))];
+
+var MeasurementsCreator = {
+  lastMeasurements: [2500, 2500, 2500, 2500, 2500],
+  createNewMeasurement: function(time) {
+    this.lastMeasurements.shift();
+    var lastMeasurement = this.lastMeasurements[this.lastMeasurements.length-1];
+    var measurement =  Math.max(0, lastMeasurement + 100*2 * (Math.random() - 0.5));
+    this.lastMeasurements.push(measurement);
+    if (Math.random() >= 0.99) {
+      measurement = Math.max(0, lastMeasurement + 1000*2 * (Math.random() - 0.5));
+    }
+
+    var prediction = this.lastMeasurements.reduce(function(a, b) { return a + b; }) / this.lastMeasurements.length;
+
+    var anomalyscore = (measurement - prediction) / prediction;
+
+    return {
+      "time": time,
+      "measurement": measurement,
+      "prediction": prediction,
+      "anomalyscore": anomalyscore
+    }
+  }
 }
 
 $(document).ready(function() {
 	var visualization = new TeeAdViz(d3.select("#maincontainer"), {
     width: window.innerWidth-100,
     measurementsHeight: Math.round(0.35*(window.innerWidth-100)),
-    thresholds: [-0.2, 3.5]
+    predictionVisibility: true,
+    anomalyscoresVisibility: true,
+    thresholds: [-0.2, 0.2]
   });
+
+  visualization.setMeasurements([]);
+
+  function addNewData() {
+    visualization.addMeasurements([MeasurementsCreator.createNewMeasurement(new Date().getTime())]);
+
+    setTimeout(addNewData, Math.random() * (500 - 100) + 100);
+  }
+  addNewData();
 
   $('#file').change(function(evt) {
     var file = evt.target.files[0];
@@ -42,25 +73,6 @@ $(document).ready(function() {
     };
     reader.readAsText(file);
   });
-
-  visualization.setMeasurements([]);
-  setInterval(requestNewData, 1000);
-  function requestNewData() {
-    visualization.addMeasurements([
-      {
-        "time": new Date().getTime(),
-        "measurement": 2500 * Math.random(),
-        "prediction": 3000 * Math.random(),
-        "anomalyscore": 5 * Math.random()
-      },
-      {
-        "time": new Date().getTime() + 100,
-        "measurement": 2500 * Math.random(),
-        "prediction": 3000 * Math.random(),
-        "anomalyscore": 5 * Math.random()
-      }
-    ]);
-  }
 
 });
 </script>
