@@ -29,7 +29,7 @@ var MeasurementsCreator = {
     var lastMeasurement = this.lastMeasurements[this.lastMeasurements.length-1];
     var measurement =  Math.max(0, lastMeasurement + 100*2 * (Math.random() - 0.5));
     this.lastMeasurements.push(measurement);
-    if (Math.random() >= 0.99) {
+    if (Math.random() >= 0.9) {
       measurement = Math.max(0, lastMeasurement + 1000*2 * (Math.random() - 0.5));
     }
 
@@ -56,7 +56,6 @@ $(document).ready(function() {
   });
 
   visualization.setMeasurements([]);
-
   function addNewData() {
     visualization.addMeasurements([MeasurementsCreator.createNewMeasurement(new Date().getTime())]);
 
