@@ -1,4 +1,4 @@
-# TeeAD-Viz
+# Anomaliz.js
 
 Required dependencies:
 * [CanvasPlot](https://a-johanson.github.io/canvas-plot)
