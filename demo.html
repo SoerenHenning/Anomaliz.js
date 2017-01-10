@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>TeeADViz Demo</title>
+  <title>Anomaliz.js Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="dep/canvasplot.css">
   <script src="dep_demo/jquery-2.2.3.min.js" charset="utf-8"></script>
   <script src="dep/d3.min.js" charset="utf-8"></script>
   <script src="dep/canvasplot.js" charset="utf-8"></script>
   <script src="dep/canvasplot-indicator-ts.js" charset="utf-8"></script>
-  <script src="teead-viz.js" charset="utf-8"></script>
+  <script src="anomaliz.js" charset="utf-8"></script>
 </head>
 <body>
 
@@ -47,7 +47,7 @@ var MeasurementsCreator = {
 }
 
 $(document).ready(function() {
-	var visualization = new TeeAdViz(d3.select("#maincontainer"), {
+	var visualization = new Anomaliz(d3.select("#maincontainer"), {
     width: window.innerWidth-100,
     measurementsHeight: Math.round(0.35*(window.innerWidth-100)),
     predictionVisibility: true,

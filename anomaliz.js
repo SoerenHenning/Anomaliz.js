@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-function TeeAdViz(domContainer, config) {
+function Anomaliz(domContainer, config) {
 	config = config || {};
 
   this.width = config.width || 600; // in px
@@ -65,7 +65,7 @@ function TeeAdViz(domContainer, config) {
 
 // public interface
 
-TeeAdViz.prototype.setMeasurements = function(measurementsSet) {
+Anomaliz.prototype.setMeasurements = function(measurementsSet) {
 
 	var anomalystates = [];
 	measurementsSet.forEach(function(value) {
@@ -100,7 +100,7 @@ TeeAdViz.prototype.setMeasurements = function(measurementsSet) {
 	}
 };
 
-TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
+Anomaliz.prototype.addMeasurements = function(measurementsSet) {
 	var beforeCalculatedXDomain = this.measurementsPlot.calculateXDomain();
 	var beforeActualXDomain = this.measurementsPlot.getXDomain();
 	var beforeEmpty = this.values.measurements.length == 0 && this.values.predictions.length == 0 && this.values.anomalyscores.length == 0;
@@ -146,7 +146,7 @@ TeeAdViz.prototype.addMeasurements = function(measurementsSet) {
 	this.updateDomains();
 };
 
-TeeAdViz.prototype.setThresholds = function() {
+Anomaliz.prototype.setThresholds = function() {
 	if (arguments.length >= 2) {
 		this.thresholds = [(arguments[0] == null) ? null : - Math.abs(arguments[0]), arguments[1]];
 	} else if (arguments.length == 1) {
@@ -162,7 +162,7 @@ TeeAdViz.prototype.setThresholds = function() {
 	this.measurementsPlot.setIndicatorDataSet(anomalystates, false, false);
 };
 
-TeeAdViz.prototype.setPredictionVisibility = function(visibility) {
+Anomaliz.prototype.setPredictionVisibility = function(visibility) {
 	this.predictionVisibility = visibility;
 	if (this.predictionVisibility) {
 		this.measurementsPlot.removeDataSet("predictions");
@@ -173,14 +173,14 @@ TeeAdViz.prototype.setPredictionVisibility = function(visibility) {
 	}
 };
 
-TeeAdViz.prototype.setAnomalyScoreVisibility = function(visibility) {
+Anomaliz.prototype.setAnomalyScoreVisibility = function(visibility) {
 	this.anomalyscoresVisibility = visibility;
 	this.anomalyscoresPlotContainer.attr("hidden", visibility ? null : true);
 };
 
 // private methods
 
-TeeAdViz.prototype.setViews = function(except, xDomain, yDomain) {
+Anomaliz.prototype.setViews = function(except, xDomain, yDomain) {
 	var plots = [this.measurementsPlot, this.anomalyscoresPlot];
 
 	plots.forEach(function(plot) {
@@ -190,7 +190,7 @@ TeeAdViz.prototype.setViews = function(except, xDomain, yDomain) {
 	});
 };
 
-TeeAdViz.prototype.updateDomains = function() {
+Anomaliz.prototype.updateDomains = function() {
 	var measurementsYDomain = this.measurementsPlot.calculateYDomain();
 	if (this.measurementsPlotStartWithZero) {
 		measurementsYDomain[0] = 0;
